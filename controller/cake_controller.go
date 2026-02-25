@@ -81,7 +81,8 @@ func (c *CakeController) Update(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "updation done",
+		"message":  "updation done",
+		"new_cake": cake,
 	})
 }
 func (c *CakeController) Delete(ctx *gin.Context) {
@@ -89,6 +90,18 @@ func (c *CakeController) Delete(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid id",
+		})
+		return
+	}
+	founded_cake, err := c.serv.GetById(ctx.Request.Context(), id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+	}
+	if founded_cake.ID != id {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "cake Not found",
 		})
 		return
 	}
